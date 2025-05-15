@@ -1,11 +1,8 @@
 import os
 import random
-import asyncio
-from telegram import Bot
-from telegram import Update
+from telegram import Bot, Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from datetime import datetime, time
 
 # 🔑 Твой токен и Chat ID
 TOKEN = os.environ.get("TOKEN")
@@ -13,6 +10,7 @@ CHAT_ID = -1001492099170  # ← твой chat_id из группы
 
 bot = Bot(token=TOKEN)
 
+# 🕒 По расписанию
 async def daily_cat():
     try:
         with open("all.jpg", "rb") as photo:
@@ -21,47 +19,44 @@ async def daily_cat():
     except Exception as e:
         print("Ошибка при отправке котика:", e)
 
+# 🟢 /start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     with open("all.jpg",  "rb") as photo:
-        await bot.send_photo(chat_id=CHAT_ID, photo=photo)
+        await update.message.reply_photo(photo)
 
+# 🟡 /1A... /1E
 async def handle_mood(update: Update, context: ContextTypes.DEFAULT_TYPE):
     mood = update.message.text.lstrip("/")  # убираем слэш
     match mood:
         case "1A" | "1a":
-            with open("1A.jpg",  "rb") as photo:
-                await bot.send_photo(chat_id=CHAT_ID, photo=photo)
+            filename = "1A.jpg"
         case "1B" | "1b":
-            with open("1B.jpg",  "rb") as photo:
-                await bot.send_photo(chat_id=CHAT_ID, photo=photo)
+            filename = "1B.jpg"
         case "1C" | "1c":
-            with open("1C.jpg",  "rb") as photo:
-                await bot.send_photo(chat_id=CHAT_ID, photo=photo)
+            filename = "1C.jpg"
         case "1D" | "1d":
-            with open("1D.png",  "rb") as photo:
-                await bot.send_photo(chat_id=CHAT_ID, photo=photo)
+            filename = "1D.png"
         case "1E" | "1e":
-            with open("1E.png",  "rb") as photo:
-                await bot.send_photo(chat_id=CHAT_ID, photo=photo)
+            filename = "1E.png"
+        case _:
+            return  # ничего не делать
 
-async def main():
-    app = ApplicationBuilder().token(TOKEN).build()
+    with open(filename, "rb") as photo:
+        await update.message.reply_photo(photo)
+        
 
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler(
-        ["1A", "1B", "1C", "1D", "1E", "1a", "1b", "1c", "1d", "1e"],
-        handle_mood
-    ))
-    
-    scheduler = AsyncIOScheduler()
-    scheduler.add_job(daily_cat, trigger='cron', hour=13, minute=0)
-    scheduler.start()
+# 🧠 Запуск приложения
+app = ApplicationBuilder().token(TOKEN).build()
 
-    await app.initialize()
-    await app.run_polling()
-    await app.shutdown()
+app.add_handler(CommandHandler("start", start))
+app.add_handler(CommandHandler(
+    ["1A", "1B", "1C", "1D", "1E", "1a", "1b", "1c", "1d", "1e"],
+    handle_mood
+))
 
-# Запуск event loop-а:
-if __name__ == "__main__":
-    import asyncio
-    asyncio.run(main())
+scheduler = AsyncIOScheduler()
+scheduler.add_job(daily_cat, trigger="cron", hour=13, minute=0)
+scheduler.start()
+
+print("Бот запущен!")
+app.run_polling()  # без await, без asyncio.run
