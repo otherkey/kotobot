@@ -46,15 +46,14 @@ async def handle_mood(update: Update, context: ContextTypes.DEFAULT_TYPE):
         
 
 # 🧠 Настройка бота
-app = ApplicationBuilder().token(TOKEN).build()
 scheduler = AsyncIOScheduler()
 
-# ✨ Планировщик запускается ПОСЛЕ инициализации бота
-@app.post_init
 async def start_scheduler(app: object) -> None:
     scheduler.add_job(daily_cat, trigger="cron", hour=13, minute=0)
     scheduler.start()
     print("⏰ Планировщик запущен")
+
+app = ApplicationBuilder().token(TOKEN).post_init(start_scheduler).build()
 
 # Команды
 app.add_handler(CommandHandler("start", start))
