@@ -10,7 +10,7 @@ CHAT_ID = -1001492099170  # ← твой chat_id из группы
 
 bot = Bot(token=TOKEN)
 
-# 🕒 По расписанию
+#  По расписанию
 async def daily_cat():
     try:
         with open("all.jpg", "rb") as photo:
@@ -19,12 +19,12 @@ async def daily_cat():
     except Exception as e:
         print("Ошибка при отправке котика:", e)
 
-# 🟢 /start
+#  /start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     with open("all.jpg",  "rb") as photo:
         await update.message.reply_photo(photo)
 
-# 🟡 /1A... /1E
+#  /1A... /1E
 async def handle_mood(update: Update, context: ContextTypes.DEFAULT_TYPE):
     mood = update.message.text.lstrip("/")  # убираем слэш
     match mood:
@@ -45,18 +45,23 @@ async def handle_mood(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_photo(photo)
         
 
-# 🧠 Запуск приложения
+# 🧠 Настройка бота
 app = ApplicationBuilder().token(TOKEN).build()
+scheduler = AsyncIOScheduler()
 
+# ✨ Планировщик запускается ПОСЛЕ инициализации бота
+@app.post_init
+async def start_scheduler(app: object) -> None:
+    scheduler.add_job(daily_cat, trigger="cron", hour=13, minute=0)
+    scheduler.start()
+    print("⏰ Планировщик запущен")
+
+# Команды
 app.add_handler(CommandHandler("start", start))
 app.add_handler(CommandHandler(
     ["1A", "1B", "1C", "1D", "1E", "1a", "1b", "1c", "1d", "1e"],
     handle_mood
 ))
 
-scheduler = AsyncIOScheduler()
-scheduler.add_job(daily_cat, trigger="cron", hour=13, minute=0)
-scheduler.start()
-
 print("Бот запущен!")
-app.run_polling()  # без await, без asyncio.run
+app.run_polling()
