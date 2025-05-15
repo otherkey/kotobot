@@ -56,10 +56,12 @@ async def main():
     scheduler = AsyncIOScheduler()
     scheduler.add_job(daily_cat, trigger='cron', hour=13, minute=0)
     scheduler.start()
-    
-    print("Бот запущен!")
+    await app.initialize()
+    scheduler.start()
     await app.run_polling()
+    await app.shutdown()
 
 # Запуск event loop-а:
-import asyncio
-asyncio.run(main())
+if __name__ == "__main__":
+    import asyncio
+    asyncio.run(main())
