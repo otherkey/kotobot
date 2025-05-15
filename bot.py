@@ -55,8 +55,9 @@ async def main():
     
     scheduler = AsyncIOScheduler()
     scheduler.add_job(daily_cat, trigger='cron', hour=13, minute=0)
-    await app.initialize()
     scheduler.start()
+
+    await app.initialize()
     await app.run_polling()
     await app.shutdown()
 
