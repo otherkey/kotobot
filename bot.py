@@ -120,7 +120,7 @@ app = ApplicationBuilder().token(TOKEN).post_init(start_scheduler).build()
 # Команды
 app.add_handler(CommandHandler("start", start))
 app.add_handler(CommandHandler(
-    ["1A", "1B", "1C", "1D", "1E", "1a", "1b", "1c", "1d", "1e", "1F", "1f", "2A", "2B", "2D", "2E", "2F", "2С", "3A", "3B", "3C", "3D", "3E", "3F", "4A", "4B", "4C", "4D", "4E", "4F", "5A", "5B", "5C", "5D", "5E", "5F", "6A", "6B", "6C", "6D", "6E", "6F", "2a", "2b", "2d", "2e", "2f", "2c", "3a", "3b", "3c", "3d", "3e", "3f", "4a", "4b", "4c", "4d", "4e", "4f", "5a", "5b", "5c", "5d", "5e", "5f", "6a", "6b", "6c", "6d", "6e", "6f"],
+    ["1A", "1B", "1C", "1D", "1E", "1a", "1b", "1c", "1d", "1e", "1F", "1f", "2A", "2B", "2D", "2E", "2F", "2С", "3A", "3B", "3C", "3D", "3E", "3F", "4A", "4B", "4C", "4D", "4E", "4F", "5A", "5B", "5C", "5D", "5E", "5F", "6A", "6B", "6C", "6D", "6E", "6F", "2a", "2b", "2d", "2e", "2f", "3a", "3b", "3c", "3d", "3e", "3f", "4a", "4b", "4c", "4d", "4e", "4f", "5a", "5b", "5c", "5d", "5e", "5f", "6a", "6b", "6c", "6d", "6e", "6f"],
     handle_mood
 ))
 
