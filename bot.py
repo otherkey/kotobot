@@ -54,7 +54,7 @@ async def main():
     ))
     
     scheduler = AsyncIOScheduler()
-    scheduler.add_job(daily_cat, trigger='cron', hour=13, minute=0, args=[app.bot])
+    scheduler.add_job(daily_cat, trigger='cron', hour=13, minute=0)
     scheduler.start()
     
     print("Бот запущен!")
