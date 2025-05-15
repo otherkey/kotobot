@@ -4,12 +4,22 @@ import asyncio
 from telegram import Bot
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from datetime import datetime, time
 
 # 🔑 Твой токен и Chat ID
 TOKEN = os.environ.get("TOKEN")
 CHAT_ID = -1001492099170  # ← твой chat_id из группы
 
 bot = Bot(token=TOKEN)
+
+async def daily_cat():
+    try:
+        with open("all.jpg", "rb") as photo:
+            await bot.send_photo(chat_id=CHAT_ID, photo=photo)
+        print("📅 Котик по расписанию отправлен!")
+    except Exception as e:
+        print("Ошибка при отправке котика:", e)
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     with open("all.jpg",  "rb") as photo:
@@ -42,6 +52,9 @@ app.add_handler(CommandHandler(
     ["1A", "1B", "1C", "1D", "1E", "1a", "1b", "1c", "1d", "1e"],
     handle_mood
 ))
+scheduler = AsyncIOScheduler()
+scheduler.add_job(daily_cat, trigger="cron", hour=13, minute=0)  # 09:00 UTC (16:00 по Москве)
+scheduler.start()
 
 print("Бот запущен!")
 app.run_polling()
