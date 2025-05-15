@@ -44,17 +44,22 @@ async def handle_mood(update: Update, context: ContextTypes.DEFAULT_TYPE):
             with open("1E.png",  "rb") as photo:
                 await bot.send_photo(chat_id=CHAT_ID, photo=photo)
 
+async def main():
+    app = ApplicationBuilder().token(TOKEN).build()
 
-app = ApplicationBuilder().token(TOKEN).build()
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler(
+        ["1A", "1B", "1C", "1D", "1E", "1a", "1b", "1c", "1d", "1e"],
+        handle_mood
+    ))
+    
+    scheduler = AsyncIOScheduler()
+    scheduler.add_job(daily_cat, trigger='cron', hour=13, minute=0, args=[app.bot])
+    scheduler.start()
+    
+    print("Бот запущен!")
+    await app.run_polling()
 
-app.add_handler(CommandHandler("start", start))
-app.add_handler(CommandHandler(
-    ["1A", "1B", "1C", "1D", "1E", "1a", "1b", "1c", "1d", "1e"],
-    handle_mood
-))
-scheduler = AsyncIOScheduler()
-scheduler.add_job(daily_cat, trigger="cron", hour=13, minute=0)  # 09:00 UTC (16:00 по Москве)
-scheduler.start()
-
-print("Бот запущен!")
-app.run_polling()
+# Запуск event loop-а:
+import asyncio
+asyncio.run(main())
