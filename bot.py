@@ -4,7 +4,7 @@ import asyncio
 from telegram import Bot
 
 # 🔑 Твой токен и Chat ID
-TOKEN = "849307760:AAGkDq_Vr8IioCvNP6esi-AR5qWmvXUu6Wg"
+TOKEN = os.environ.get("TOKEN")
 CHAT_ID = -1001492099170  # ← твой chat_id из группы
 
 bot = Bot(token=TOKEN)
